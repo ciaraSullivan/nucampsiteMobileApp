@@ -8,9 +8,7 @@ export const fetchComments = () => (dispatch) => {
 				if (response.ok) {
 					return response
 				} else {
-					const error = new Error(
-						`Error ${response.status}: ${response.statusText}`
-					)
+					const error = new Error(`Error ${response.status}: ${response.statusText}`)
 					error.response = response
 					throw error
 				}
@@ -63,9 +61,7 @@ export const fetchCampsites = () => (dispatch) => {
 				if (response.ok) {
 					return response
 				} else {
-					const error = new Error(
-						`Error ${response.status}: ${response.statusText}`
-					)
+					const error = new Error(`Error ${response.status}: ${response.statusText}`)
 					error.response = response
 					throw error
 				}
@@ -103,9 +99,7 @@ export const fetchPromotions = () => (dispatch) => {
 				if (response.ok) {
 					return response
 				} else {
-					const error = new Error(
-						`Error ${response.status}: ${response.statusText}`
-					)
+					const error = new Error(`Error ${response.status}: ${response.statusText}`)
 					error.response = response
 					throw error
 				}
@@ -143,9 +137,7 @@ export const fetchPartners = () => (dispatch) => {
 				if (response.ok) {
 					return response
 				} else {
-					const error = new Error(
-						`Error ${response.status}: ${response.statusText}`
-					)
+					const error = new Error(`Error ${response.status}: ${response.statusText}`)
 					error.response = response
 					throw error
 				}
@@ -182,5 +174,10 @@ export const postFavorite = (campsiteId) => (dispatch) => {
 
 export const addFavorite = (campsiteId) => ({
 	type: ActionTypes.ADD_FAVORITE,
+	payload: campsiteId,
+})
+
+export const deleteFavorite = (campsiteId) => ({
+	type: ActionTypes.DELETE_FAVORITE,
 	payload: campsiteId,
 })
