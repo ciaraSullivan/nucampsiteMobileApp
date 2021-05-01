@@ -2,6 +2,7 @@ import React, { Component } from "react"
 import { Text, View, ScrollView, StyleSheet, Picker, Switch, Button, Alert } from "react-native"
 import DateTimePicker from "@react-native-community/datetimepicker"
 import * as Animatable from "react-native-animatable"
+import * as Notifications from "expo-notifications"
 
 class Reservation extends Component {
 	constructor(props) {
@@ -28,13 +29,43 @@ class Reservation extends Component {
 		})
 	}
 
+	async presentLocalNotification(date) {
+		function sendNotification() {
+			Notifications.setNotificationHandler({
+				handleNotification: async () => ({
+					shouldShowAlert: true,
+				}),
+			})
+
+			Notifications.scheduleNotificationAsync({
+				content: {
+					title: "Your Campsite Reservation Search",
+					body: `Search for ${date} requested`,
+				},
+				trigger: null,
+			})
+		}
+
+		let permissions = await Notifications.getPermissionsAsync()
+		if (!permissions.granted) {
+			permissions = await Notifications.requestPermissionsAsync()
+		}
+		if (permissions.granted) {
+			sendNotification()
+		}
+	}
+
 	render() {
 		return (
 			<ScrollView>
 				<Animatable.View animation='zoomIn' duration={2000} delay={1000}>
 					<View style={styles.formRow}>
 						<Text style={styles.formLabel}>Number of Campers</Text>
-						<Picker style={styles.formItem} selectedValue={this.state.campers} onValueChange={(itemValue) => this.setState({ campers: itemValue })}>
+						<Picker
+							style={styles.formItem}
+							selectedValue={this.state.campers}
+							onValueChange={(itemValue) => this.setState({ campers: itemValue })}
+						>
 							<Picker.Item label='1' value='1' />
 							<Picker.Item label='2' value='2' />
 							<Picker.Item label='3' value='3' />
@@ -45,7 +76,12 @@ class Reservation extends Component {
 					</View>
 					<View style={styles.formRow}>
 						<Text style={styles.formLabel}>Hike-In?</Text>
-						<Switch style={styles.formItem} value={this.state.hikeIn} trackColor={{ true: "#5637DD", false: null }} onValueChange={(value) => this.setState({ hikeIn: value })} />
+						<Switch
+							style={styles.formItem}
+							value={this.state.hikeIn}
+							trackColor={{ true: "#5637DD", false: null }}
+							onValueChange={(value) => this.setState({ hikeIn: value })}
+						/>
 					</View>
 					<View style={styles.formRow}>
 						<Text style={styles.formLabel}>Date</Text>
@@ -91,7 +127,12 @@ Date: ${this.state.date.toLocaleDateString("en-US")}`,
 										},
 										{
 											text: "OK",
-											onPress: () => this.resetForm(),
+											onPress: () => {
+												this.presentLocalNotification(
+													this.state.date.toLocaleDateString("en-US")
+												)
+												this.resetForm()
+											},
 										},
 									],
 									{ cancelable: false }
